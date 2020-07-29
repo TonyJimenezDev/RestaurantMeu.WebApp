@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RestaurantMeu.WebApp.Models;
+using RestaurantMeu.WebApp.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,7 +12,14 @@ namespace RestaurantMeu.WebApp.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            CustomerRepo customerRepo = new CustomerRepo();
+            ItemRepo itemRepo = new ItemRepo();
+            PaymentTypeRepo paymentTypeRepo = new PaymentTypeRepo();
+
+            var multiModels = new Tuple<IEnumerable<SelectListItem>, IEnumerable<SelectListItem>, IEnumerable<SelectListItem>>
+                (customerRepo.GetAllCustomers(), itemRepo.GetAllItems(), paymentTypeRepo.GetAllPaymentTypes());
+
+            return View(multiModels);
         }
 
         public ActionResult About()
