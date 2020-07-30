@@ -1,0 +1,21 @@
+﻿fieldset {
+    border: 1px solid #ddd !important;
+    margin: 0;
+    xmin-width: 0;
+    padding: 10px;
+    position: relative;
+    border-radius: 4px;
+    background-color: darkgray;
+    padding-left: 10px !important;
+}
+
+legend {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: -8px;
+    width: initial;
+    border: 1px solid darkgray;
+    border-radius: 6px;
+    padding: 5px 10px 5px 10px;
+    background-color: #4cff00;
+}
