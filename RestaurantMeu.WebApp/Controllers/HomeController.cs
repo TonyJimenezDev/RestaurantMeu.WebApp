@@ -10,6 +10,12 @@ namespace RestaurantMeu.WebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly RestaurantDBEntities _restaurantDBEntities;
+
+        public HomeController()
+        {
+            _restaurantDBEntities = new RestaurantDBEntities();
+        }
         public ActionResult Index()
         {
             CustomerRepo customerRepo = new CustomerRepo();
@@ -20,6 +26,13 @@ namespace RestaurantMeu.WebApp.Controllers
                 (customerRepo.GetAllCustomers(), itemRepo.GetAllItems(), paymentTypeRepo.GetAllPaymentTypes());
 
             return View(multiModels);
+        }
+
+        [HttpGet]
+        public JsonResult GetItemPrice(int itemId)
+        {
+            decimal price = _restaurantDBEntities.Items.Single(model => model.ItemId == itemId).ItemPrice;
+            return Json(price, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult About()

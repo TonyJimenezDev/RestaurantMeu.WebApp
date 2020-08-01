@@ -3,34 +3,95 @@
 @{
     ViewBag.Title = "Home Page";
 }
+<link rel="stylesheet" href="~/Content/Home.css" />
 
-<link rel="stylesheet" href="~/Content/Home.css" />      
-
-
-<fieldset class="test">
-    <legend>
-        Restaurant
-    </legend>
+<fieldset>
+    <legend>Menu</legend>
     <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    Customer:
-                    @Html.DropDownList("Customer", new SelectList(Model.Item1, "Value", "Text"),
+        <div class="row" style="margin-left: 15px">
+            <div class="form-group">
+                <label>Item:</label>
+                @Html.DropDownList("Item", new SelectList(Model.Item2, "Value", "Text"),
                    new { @class = "form-control" })
-                </div>
             </div>
-
-            <div class="col-md-6">
-                <div class="form-group">
-                    Payment Type:
-                    @Html.DropDownList("PaymentType", new SelectList(Model.Item3, "Value", "Text"),
-                   new { @class = "form-control" })
-                </div>
+            <div class="form-group">
+                <label>Quantity:</label>
+                <input type="number" style="text-align: right" id="txtQuantity" value="0.00" name="Qauntity" min="0" >
+            </div>
+            <div class="form-group">
+                <label>Price:</label>
+                <input type="text" style="text-align: right" readonly="readonly" id="txtPrice" value="0.00" name="Price" class="form-control">
             </div>
         </div>
     </div>
 </fieldset>
+
+<fieldset>
+    <legend>
+        Checkout
+    </legend>
+    <div class="container">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Customer:</label>
+                @Html.DropDownList("Customer", new SelectList(Model.Item1, "Value", "Text"),
+               new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <label>Payment Type:</label>
+                @Html.DropDownList("PaymentType", new SelectList(Model.Item3, "Value", "Text"),
+               new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Discount:</label>
+                <input type="text" style="text-align: right" id="txtDiscount" value="0.00" name="Discount" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Total: <i style="font-weight: 300">plus tax</i></label>
+                <input type="text" style="text-align: right" readonly="readonly" id="txtTotal" value="0.00" name="Total" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <input type="button" style="margin-top: 5px" value="Add To List" name="AddToList" id="btnAddToList" class="btn btn-success" />
+        </div>
+    </div>
+</fieldset>
+<fieldset>
+    <legend>Listed Items</legend>
+    <table style="width:100%">
+        <thead>
+            <tr>
+                <th hidden>
+                    Item Id
+                </th>
+                <th>
+                    Item Name
+                </th>
+                <th>
+                    Price
+                </th>
+                <th>
+                    Quantity
+                </th>
+                <th>
+                    Discount
+                </th>
+                <th>
+                    Total
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+    </table>
+</fieldset>
+
+
 
 
 

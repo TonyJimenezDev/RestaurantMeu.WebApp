@@ -9,22 +9,22 @@ namespace RestaurantMeu.WebApp.Repositories
 {
     public class PaymentTypeRepo
     {
-        private readonly RestaurantDBEntities restaurantDBEntities;
+        private readonly RestaurantDBEntities _restaurantDBEntities;
 
         public PaymentTypeRepo()
         {
-            restaurantDBEntities = new RestaurantDBEntities();
+            _restaurantDBEntities = new RestaurantDBEntities();
         }
 
         public IEnumerable<SelectListItem> GetAllPaymentTypes()
         {
             IEnumerable<SelectListItem> selectListItems = new List<SelectListItem>();
-            selectListItems = (from db in restaurantDBEntities.PaymentTypes
+            selectListItems = (from db in _restaurantDBEntities.PaymentTypes
                                select new SelectListItem()
                                {
                                    Text = db.PaymentTypeName,
                                    Value = db.PaymentTypeId.ToString(),
-                                   Selected = true
+                                   Selected = false
                                }).ToList();
             return selectListItems;
         }
