@@ -24,7 +24,7 @@ namespace RestaurantMeu.WebApp.Repositories
                                {
                                    Text = db.ItemName,
                                    Value = db.ItemId.ToString(),
-                                   Selected = false
+                                   Selected = true
                                }).ToList();
             return selectListItems;
         }
