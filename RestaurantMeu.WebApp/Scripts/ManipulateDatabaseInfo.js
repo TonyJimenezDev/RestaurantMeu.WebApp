@@ -1,12 +1,12 @@
 ﻿/* Jquery dependent*/
 
 $(document).ready(function () {
-    $("#Item").val(0);
+    $("#Item").val(0.00);
     $("#Item").change(function () { /* Drop down item name */
         var itemId = $("#Item").val();
         GetItemPrice(itemId);
         $("#txtQuantity").val(0);
-        $("#txtTotal").val(0);
+        $("#txtTotal").val("0.00");
     });
     $("input[type=text]").change(function () { /*Fires off input type=text */
         CalculateSubTotal();
