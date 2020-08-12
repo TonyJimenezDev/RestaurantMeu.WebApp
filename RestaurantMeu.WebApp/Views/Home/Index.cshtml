@@ -7,64 +7,105 @@
 
 
 <fieldset>
-    <legend>Menu</legend>
+    <legend>Customer Order</legend>
     <div class="container">
-        <div class="row" style="margin-left: 15px">
-            <div class="form-group">
-                <label>Item:</label>
-                @Html.DropDownList("Item", new SelectList(Model.Item2, "Value", "Text"),
+        <div class="row" style="margin-right: 5%">
+
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Customer:</label>
+                    @Html.DropDownList("Customer", new SelectList(Model.Item1, "Value", "Text"),
                    new { @class = "form-control" })
+                </div>
             </div>
-            <div class="form-group">
-                <label>Quantity:</label>
-                <input type="number" style="text-align: right" id="txtQuantity" value="0.00" name="Qauntity" min="0" >
+
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Payment Type:</label>
+                    @Html.DropDownList("PaymentType", new SelectList(Model.Item3, "Value", "Text"),
+                   new { @class = "form-control" })
+                </div>
             </div>
-            <div class="form-group">
-                <label>Price:</label>
-                <input type="text" style="text-align: right" readonly="readonly" id="txtPrice" value="0.00" name="Price" class="form-control">
+
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Tax:</label>
+                    <input type="text" style="text-align: right" readonly="readonly" id="txtFinalTax" value="0.00" name="FinalTax" class="form-control">
+                </div>
             </div>
+
+            <div class="col-md-5">
+                <div class="form-group">
+                    <label>Total: <i style="font-weight: 300">plus tax</i></label>
+                    <input type="text" style="text-align: right" readonly="readonly" id="txtFinalTotal" value="0.00" name="FinalTotal" class="form-control">
+                </div>
+            </div>
+
         </div>
     </div>
 </fieldset>
 
 <fieldset>
-    <legend>
-        Checkout
-    </legend>
+    <legend>Customer Items</legend>
     <div class="container">
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Customer:</label>
-                @Html.DropDownList("Customer", new SelectList(Model.Item1, "Value", "Text"),
-               new { @class = "form-control" })
+        <div class="row" style="margin-right: 5%">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Item:</label>
+                    @Html.DropDownList("Item", new SelectList(Model.Item2, "Value", "Text"),
+                       new { @class = "form-control" })
+                </div>
             </div>
-            <div class="form-group">
-                <label>Payment Type:</label>
-                @Html.DropDownList("PaymentType", new SelectList(Model.Item3, "Value", "Text"),
-               new { @class = "form-control" })
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Price:</label>
+                    <input type="text" style="text-align: right" readonly="readonly" id="txtPrice" value="0.00" name="Price" class="form-control">
+                </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label>Discount:</label>
-                <input type="text" style="text-align: right" id="txtDiscount" value="0.00" name="Discount" class="form-control">
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Discount:</label>
+                    <input type="text" style="text-align: right" id="txtDiscount" value="0.00" name="Discount" class="form-control">
+                </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <div class="form-group">
-                <label>Total: <i style="font-weight: 300">plus tax</i></label>
-                <input type="text" style="text-align: right" readonly="readonly" id="txtTotal" value="0.00" name="Total" class="form-control">
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Quantity:</label><br />
+                    <input type="number" style="text-align: right" id="txtQuantity" value="0.00" name="Qauntity" min="0" class="form-control">
+                </div>
             </div>
-        </div>
-        <div class="col-md-6">
-            <input type="button" style="margin-top: 5px" value="Add To List" name="AddToList" id="btnAddToList" class="btn btn-success" />
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Tax: <i>.0825%</i></label>
+                    <input type="text" style="text-align: right" readonly="readonly" id="txtTax" value="0.00" name="Tax" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>Total: <i style="font-weight: 300">plus tax</i></label>
+                    <input type="text" style="text-align: right" readonly="readonly" id="txtTotal" value="0.00" name="Total" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-md-8">
+                <div class="form-group">
+                    <input type="button" style="margin-top: 5px" value="Add To List" name="AddToList" id="btnAddToList" class="btn btn-success" />
+                </div>
+            </div>
+
+
         </div>
     </div>
 </fieldset>
 
 <fieldset>
     <legend>Listed Items</legend>
-    <table style="width:100%">
+    <table style="width:100%" id="tblRestaurantItemList">
         <thead>
             <tr>
                 <th hidden>
