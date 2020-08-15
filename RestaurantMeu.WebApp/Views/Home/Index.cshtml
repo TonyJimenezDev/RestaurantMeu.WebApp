@@ -52,7 +52,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Item:</label>
-                    @Html.DropDownList("Item", new SelectList(Model.Item2, "Value", "Text"),
+                    @Html.DropDownList("item", new SelectList(Model.Item2, "Value", "Text"),
                        new { @class = "form-control" })
                 </div>
             </div>
@@ -122,6 +122,9 @@
                 </th>
                 <th>
                     Discount
+                </th>
+                <th>
+                    Tax
                 </th>
                 <th>
                     Total
