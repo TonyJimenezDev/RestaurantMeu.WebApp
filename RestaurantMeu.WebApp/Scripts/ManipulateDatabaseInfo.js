@@ -1,22 +1,23 @@
-﻿/* Jquery dependent*/
+﻿/* Jquery dependent */
 
 $(document).ready(function () {
     $("#item").val(0);
+    $("#txtTotal").val("0.00");
+  
     $("#item").change(function () { /* Drop down item name */
-        var itemId = $("#item").val();
-        $("#txtQuantity").val(0);
-        $("#txtTotal").val("0.00");
+        var itemId = $("#item").val(); 
+        $("#txtQuantity").val(0); /* Resets quantity - updates calculations */
         GetItemPrice(itemId);
     });
-    $("input[type=text]").change(function () { /*Fires off input type=text */
+    $("input[type=text]").change(function () { /*Fires off all input type=text */
         CalculateSalesTax();
         CalculateSubTotal();
     })
-    $("#txtQuantity").change(function () { /*Fires off on Quantity */
+    $("#txtQuantity").change(function () { 
         CalculateSalesTax();
         CalculateSubTotal();
     })
-    $("#btnAddToList").click(function () { /*Fires off on button add */
+    $("#btnAddToList").click(function () { 
         AddToTheItemList();
     })
 });
@@ -24,50 +25,105 @@ $(document).ready(function () {
 function AddToTheItemList() {
     var tblItemList = $("#tblRestaurantItemList");
     var unitPrice = $("#txtPrice").val();
-    var quantity = $("#txtQuantity").val();
-    var discount = $("#txtDiscount").val();
+    var quantity = parseFloat($("#txtQuantity").val());
+    var discount = parseFloat($("#txtDiscount").val());
     var itemId = $("#item").val(); /* Hidden field */
     var itemName = $("#item option:selected").text();
-    var tax = $("#txtTax").val();
-    var Total = (unitPrice * quantity) - discount;
-
+    var tax = parseFloat($("#txtTax").val());
+    var total = parseFloat($("#txtTotal").val());
+    var count = 0;
     var itemList = "<tr><td hidden>" + itemId + "</td>" +
         "<td>" + itemName + "</td>" +
         "<td>" + unitPrice + "</td>" +
         "<td>" + quantity + "</td>" +
-        "<td>" + parseFloat(discount).toFixed(2) + "</td>" +
-        "<td>" + parseFloat(tax).toFixed(2) + "</td/>" +
-        "<td>" + parseFloat(Total).toFixed(2) + "</td>" +
-        "<td> <input type='button' value='Remove' name='remove' class='btn btn-danger' onclick='RemoveItem(this)' /> </td></tr>";
+        "<td>" + discount.toFixed(2) + "</td>" +
+        "<td>" + tax.toFixed(2) + "</td/>" +
+        "<td>" + total.toFixed(2) + "</td>" +
+        "<td> <input type='button' value='Remove' name='remove' class='btn btn-danger' onclick='RemoveItemOnClick(this)' /> </td></tr>";
 
-    tblItemList.append(itemList);
+    $("#tblRestaurantItemList").find("tr:gt(0)").each(function () {
+        if ($(this).find("td:eq(1)").text() == itemName && count < 2) {
+            count++;
+        } 
+    });
+    if (quantity > 0 && itemName != "") {
+        if (count < 1) {
+            tblItemList.append(itemList);
+        } else {
+            UpdateItemList(quantity, discount, tax, total);
+        }
+    }
+    NotificationAlerts(itemName, quantity);
     FinalItemTotal();
     ResetItem();
 }
 
+function NotificationAlerts(item, quantity) {
+    if (item == "") {
+        $("#item").notify("Item cannot be empty");
+    }
+    if (parseFloat(quantity) < 1) {
+        $("#txtQuantity").notify("Quantity cannot be 0")
+    }
+}
+
+function UpdateItemList(quantity, discount, tax, total) {
+    var itemName = $("#item option:selected").text();
+    $("#tblRestaurantItemList").find("tr:gt(0)").each(function () {
+        if ($(this).find("td:eq(1)").text() == itemName) {
+            var listQuantity = parseFloat($(this).find("td:eq(3)").text()); /* equal to index td in tr = quantity */
+            var listDiscount = parseFloat($(this).find("td:eq(4)").text()); /* equal to index td in tr = discount */
+            var listTax = parseFloat($(this).find("td:eq(5)").text()); /* equal to index td in tr = tax */
+            var listSubTotal = parseFloat($(this).find("td:eq(6)").text()); /* equal to index td in tr = total */
+            quantity = quantity + listQuantity;
+            discount = discount + listDiscount;
+            tax = tax + listTax;
+            total = total + listSubTotal;
+
+            parseFloat($(this).find("td:eq(3)").text(quantity));
+            parseFloat($(this).find("td:eq(4)").text(discount.toFixed(2)));
+            parseFloat($(this).find("td:eq(5)").text(tax.toFixed(2)));
+            parseFloat($(this).find("td:eq(6)").text(total.toFixed(2)));
+        }
+    });
+}
+
 function FinalItemTotal() {
-    $("#txtFinalTotal").val("0.00");
     var finalTotal = 0.00;
+    var finalTax = 0.00;
     $("#tblRestaurantItemList").find("tr:gt(0)").each(function () {
         var tax = parseFloat($(this).find("td:eq(5)").text()); /* equal to index td in tr = tax */
         var subTotal = parseFloat($(this).find("td:eq(6)").text()); /* equal to index td in tr = total */
-        finalTotal += tax + subTotal;
+        finalTotal = finalTotal + subTotal;
+        finalTax = finalTax + tax;
     });
+    $("#txtFinalTax").val(parseFloat(finalTax).toFixed(2));
     $("#txtFinalTotal").val(parseFloat(finalTotal).toFixed(2));
 }
 
-/* ToDo: remove from final price */
-function RemoveItem(itemId) {
-    $(itemId).closest('tr').remove(); /* Remove closes tr tag */
+function RemoveItemOnClick(itemId) {
+    var finalTax = parseFloat($("#txtFinalTax").val());
+    var finalTotal = parseFloat($("#txtFinalTotal").val()); 
+    var tax = parseFloat($(itemId).closest("tr").find("td:eq(5)").text()); /* equal to index td in tr = tax */
+    var total = parseFloat($(itemId).closest("tr").find("td:eq(6)").text()); /* equal to index td in tr = total */
+
+    finalTax = finalTax - tax;
+    finalTotal = finalTotal - total;
+
+    $("#txtFinalTax").val(finalTax.toFixed(2));
+    $("#txtFinalTotal").val(finalTotal.toFixed(2));
+    $(itemId).closest('tr').remove(); /* Remove closes tr tag to itemId */   
 }
 
 function ResetItem() {
-    $("#txtPrice").val('');
-    $("#txtQuantity").val('');
-    $("#txtDiscount").val('0.00');
-    $("#item").val(0);
-    $("#txtTotal").val("0.00");
-    $("#txtTax").val("0.00");
+    if ($("#txtQuantity").val() > 0 && $("#item").val() > 0) {
+        $("#item").val(0);
+        $("#txtQuantity").val(0);
+        $("#txtPrice").val('');
+        $("#txtDiscount").val('0.00');
+        $("#txtTotal").val("0.00");
+        $("#txtTax").val("0.00");
+    }
 }
 
 function CalculateSubTotal() { 
