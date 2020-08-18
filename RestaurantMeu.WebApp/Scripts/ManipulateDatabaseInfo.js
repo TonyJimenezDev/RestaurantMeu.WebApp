@@ -6,35 +6,41 @@ $(document).ready(function () {
   
     $("#item").change(function () { /* Drop down item name */
         var itemId = $("#item").val(); 
-        $("#txtQuantity").val(0); /* Resets quantity - updates calculations */
+        $("#txtQuantity").val(0); 
         GetItemPrice(itemId);
     });
-    $("input[type=text]").change(function () { /*Fires off all input type=text */
-        CalculateSalesTax();
+    $("input[type=number]").change(function () { 
         CalculateSubTotal();
     })
-    $("#txtQuantity").change(function () { 
-        CalculateSalesTax();
-        CalculateSubTotal();
+    $("#txtPaymentAmount, #txtReturnTotal").change(function () { 
+        CalculateBalance();
+        NotificationAlerts();
     })
     $("#btnAddToList").click(function () { 
         AddToTheItemList();
     })
 });
 
+
 function AddToTheItemList() {
     var tblItemList = $("#tblRestaurantItemList");
-    var unitPrice = $("#txtPrice").val();
+    var unitPrice = parseFloat($("#txtPrice").val());
     var quantity = parseFloat($("#txtQuantity").val());
     var discount = parseFloat($("#txtDiscount").val());
     var itemId = $("#item").val(); /* Hidden field */
     var itemName = $("#item option:selected").text();
     var tax = parseFloat($("#txtTax").val());
     var total = parseFloat($("#txtTotal").val());
+    var checkoutBtn = $("#btnCheckOut");
     var count = 0;
+
+    if (isNaN(discount)) discount = 0.00;
+    else if (discount >= unitPrice) discount = unitPrice; /* Sets discount to unitPrice if over the unit price*/
+    if (isNaN(quantity)) quantity = 0;
+
     var itemList = "<tr><td hidden>" + itemId + "</td>" +
         "<td>" + itemName + "</td>" +
-        "<td>" + unitPrice + "</td>" +
+        "<td>" + unitPrice.toFixed(2) + "</td>" +
         "<td>" + quantity + "</td>" +
         "<td>" + discount.toFixed(2) + "</td>" +
         "<td>" + tax.toFixed(2) + "</td/>" +
@@ -46,35 +52,28 @@ function AddToTheItemList() {
             count++;
         } 
     });
+
     if (quantity > 0 && itemName != "") {
         if (count < 1) {
+            checkoutBtn.removeAttr("disabled");
             tblItemList.append(itemList);
         } else {
             UpdateItemList(quantity, discount, tax, total);
         }
     }
-    NotificationAlerts(itemName, quantity);
     FinalItemTotal();
-    ResetItem();
-}
-
-function NotificationAlerts(item, quantity) {
-    if (item == "") {
-        $("#item").notify("Item cannot be empty");
-    }
-    if (parseFloat(quantity) < 1) {
-        $("#txtQuantity").notify("Quantity cannot be 0")
-    }
+    NotificationAlerts();
+    ResetItems();
 }
 
 function UpdateItemList(quantity, discount, tax, total) {
     var itemName = $("#item option:selected").text();
     $("#tblRestaurantItemList").find("tr:gt(0)").each(function () {
         if ($(this).find("td:eq(1)").text() == itemName) {
-            var listQuantity = parseFloat($(this).find("td:eq(3)").text()); /* equal to index td in tr = quantity */
-            var listDiscount = parseFloat($(this).find("td:eq(4)").text()); /* equal to index td in tr = discount */
-            var listTax = parseFloat($(this).find("td:eq(5)").text()); /* equal to index td in tr = tax */
-            var listSubTotal = parseFloat($(this).find("td:eq(6)").text()); /* equal to index td in tr = total */
+            var listQuantity = parseFloat($(this).find("td:eq(3)").text()); /* equal to index td in tr = quantity in list */
+            var listDiscount = parseFloat($(this).find("td:eq(4)").text()); /* equal to index td in tr = discount in list*/
+            var listTax = parseFloat($(this).find("td:eq(5)").text()); /* equal to index td in tr = tax in list*/
+            var listSubTotal = parseFloat($(this).find("td:eq(6)").text()); /* equal to index td in tr = total in list*/
             quantity = quantity + listQuantity;
             discount = discount + listDiscount;
             tax = tax + listTax;
@@ -88,6 +87,17 @@ function UpdateItemList(quantity, discount, tax, total) {
     });
 }
 
+function CalculateBalance() {
+    var finalAmount = $("#txtPaymentTotal").val();
+    var paymentAmount = $("#txtPaymentAmount").val();
+    var returnAmount = $("#txtReturnTotal").val();
+    var balanceAmount = parseFloat(finalAmount) - parseFloat(paymentAmount) + parseFloat(returnAmount);
+    $("#txtBalanceAmount").val(parseFloat(balanceAmount).toFixed(2)); /* needs to be a number */
+
+    if (parseFloat(balanceAmount) == 0) $("#btnPayment").removeAttr("disabled");
+    else $("#btnPayment").attr("disabled", "disabled");
+}
+
 function FinalItemTotal() {
     var finalTotal = 0.00;
     var finalTax = 0.00;
@@ -99,6 +109,8 @@ function FinalItemTotal() {
     });
     $("#txtFinalTax").val(parseFloat(finalTax).toFixed(2));
     $("#txtFinalTotal").val(parseFloat(finalTotal).toFixed(2));
+    $("#txtPaymentTotal").val(parseFloat(finalTotal).toFixed(2));
+    $("#txtBalanceAmount").val(parseFloat(finalTotal).toFixed(2));
 }
 
 function RemoveItemOnClick(itemId) {
@@ -106,16 +118,20 @@ function RemoveItemOnClick(itemId) {
     var finalTotal = parseFloat($("#txtFinalTotal").val()); 
     var tax = parseFloat($(itemId).closest("tr").find("td:eq(5)").text()); /* equal to index td in tr = tax */
     var total = parseFloat($(itemId).closest("tr").find("td:eq(6)").text()); /* equal to index td in tr = total */
-
+    
     finalTax = finalTax - tax;
     finalTotal = finalTotal - total;
 
     $("#txtFinalTax").val(finalTax.toFixed(2));
     $("#txtFinalTotal").val(finalTotal.toFixed(2));
-    $(itemId).closest('tr').remove(); /* Remove closes tr tag to itemId */   
+    $("#txtPaymentTotal").val(parseFloat(finalTotal).toFixed(2));
+    $("#txtBalanceAmount").val(parseFloat(finalTotal).toFixed(2));
+    $(itemId).closest('tr').remove(); 
+    var rowCount = $('#tblRestaurantItemList').find('tr').length;
+    if (rowCount == 1) $("#btnCheckOut").attr("disabled", "disabled");
 }
 
-function ResetItem() {
+function ResetItems() {
     if ($("#txtQuantity").val() > 0 && $("#item").val() > 0) {
         $("#item").val(0);
         $("#txtQuantity").val(0);
@@ -126,28 +142,22 @@ function ResetItem() {
     }
 }
 
-function CalculateSubTotal() { 
+function CalculateSubTotal() { /* Tax included */
     var unitPrice = $("#txtPrice").val();
     var quantity = $("#txtQuantity").val();
     var discount = $("#txtDiscount").val();
-    var tax = ((unitPrice * quantity) - discount) * .0825; 
+    var tax = $("#txtTax").val();
+    if (quantity > 0) {
+        tax = ((unitPrice * quantity) - discount) * .0825;
+        if (parseFloat(tax) <= 0.00) $("#txtTax").val("0.00");
+        else $("#txtTax").val(tax.toFixed(2));
+    }
 
     var Total = (unitPrice * quantity) - discount + tax;
-    if (Total <= 0) {
-        $("#txtTotal").val("0.00")
-    }
-    else {
-        $("#txtTotal").val(Total.toFixed(2))
-    }
+    if (Total <= 0) $("#txtTotal").val("0.00")
+    else $("#txtTotal").val(Total.toFixed(2))
 }
 
-function CalculateSalesTax() {
-    var unitPrice = $("#txtPrice").val();
-    var quantity = $("#txtQuantity").val();
-    var discount = $("#txtDiscount").val();
-    var tax = ((unitPrice * quantity) - discount) * .0825; 
-    $("#txtTax").val(tax.toFixed(2));
-}
 function GetItemPrice(itemId) {
     $.ajax({
         async: true,
@@ -163,4 +173,18 @@ function GetItemPrice(itemId) {
             alert("Issue getting price");
         }
     });
+}
+
+function NotificationAlerts() {
+    var itemName = $("#item option:selected").text();
+    var quantity = parseFloat($("#txtQuantity").val());
+    var finalTotal = $("#txtFinalTotal").val();
+    var balanceAmount = $("#txtBalanceAmount").val();
+    if ($("#divPayment").is(":hidden")) {
+        if (itemName == "") $("#item").notify("Item cannot be empty");
+        if (quantity < 1 || isNaN(quantity)) $("#txtQuantity").notify("Quantity cannot be 0")
+    } else {
+        if (balanceAmount == "") $("#txtBalanceAmount").val(finalTotal); 
+    }
+
 }

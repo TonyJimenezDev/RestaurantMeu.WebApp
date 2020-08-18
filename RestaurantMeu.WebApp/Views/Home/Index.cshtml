@@ -8,8 +8,8 @@
 
 <fieldset>
     <legend>Customer Order</legend>
-    <div class="container">
-        <div class="row" style="margin-right: 5%">
+    <div class="container" >
+        <div class="row" style="margin-right: 5%" >
 
             <div class="col-md-5">
                 <div class="form-group">
@@ -30,14 +30,14 @@
             <div class="col-md-5">
                 <div class="form-group">
                     <label>Tax:</label>
-                    <input type="text" style="text-align: right" readonly="readonly" id="txtFinalTax" value="0.00" name="FinalTax" class="form-control">
+                    <input type="number" style="text-align: right" readonly="readonly" id="txtFinalTax" value="0.00" name="FinalTax" class="form-control">
                 </div>
             </div>
 
             <div class="col-md-5">
                 <div class="form-group">
                     <label>Total: <i style="font-weight: 300">plus tax</i></label>
-                    <input type="text" style="text-align: right" readonly="readonly" id="txtFinalTotal" value="0.00" name="FinalTotal" class="form-control">
+                    <input type="number" style="text-align: right" readonly="readonly" id="txtFinalTotal" value="0.00" name="FinalTotal" class="form-control">
                 </div>
             </div>
 
@@ -60,14 +60,14 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Price:</label>
-                    <input type="text" style="text-align: right" readonly="readonly" id="txtPrice" value="0.00" name="Price" class="form-control">
+                    <input type="number" style="text-align: right" readonly="readonly" id="txtPrice" value="0.00" name="Price" class="form-control">
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Discount:</label>
-                    <input type="text" style="text-align: right" id="txtDiscount" value="0.00" name="Discount" class="form-control">
+                    <input type="number" style="text-align: right" id="txtDiscount" value="0.00" name="Discount" class="form-control">
                 </div>
             </div>
 
@@ -81,14 +81,14 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Tax: <i>.0825%</i></label>
-                    <input type="text" style="text-align: right" readonly="readonly" id="txtTax" value="0.00" name="Tax" class="form-control">
+                    <input type="number" style="text-align: right" readonly="readonly" id="txtTax" value="0.00" name="Tax" class="form-control">
                 </div>
             </div>
 
             <div class="col-md-4">
                 <div class="form-group">
                     <label>Total: <i style="font-weight: 300">plus tax</i></label>
-                    <input type="text" style="text-align: right" readonly="readonly" id="txtTotal" value="0.00" name="Total" class="form-control">
+                    <input type="number" style="text-align: right" readonly="readonly" id="txtTotal" value="0.00" name="Total" class="form-control">
                 </div>
             </div>
 
@@ -98,9 +98,14 @@
                 </div>
             </div>
 
-            <div class="col-md-2">
+            @*<div class="col-md-2">
                 <div class="form-group">
                     <input style="margin-top: 5px" type="button" value="Save" name="save" id="btnSaveOrder" class="btn btn-primary" />
+                </div>
+            </div>*@
+            <div class="col-md-2">
+                <div class="form-group">
+                    <input data-backdrop="static" data-keydrop="false" data-toggle="modal" data-target="#divPayment" style="margin-top: 5px" type="button" value="Checkout" name="checkout" id="btnCheckOut" class="btn btn-primary" disabled="disabled" />
                 </div>
             </div>
 
@@ -117,7 +122,7 @@
                     Item Id
                 </th>
                 <th>
-                    Item Name
+                    Item
                 </th>
                 <th>
                     Price
@@ -142,3 +147,50 @@
     </table>
 </fieldset>
 
+<div id="divPayment" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Payment</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="container">
+
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <label>Payment Total :</label>
+                            <input type="number" style="text-align: right" id="txtPaymentTotal" readonly="readonly" value="0.00" class="form-control" />
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label>Payment Amount :</label>
+                            <input type="number" style="text-align: right" id="txtPaymentAmount" value="0.00" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <label>Return Total :</label>
+                            <input type="number" style="text-align: right" id="txtReturnTotal" value="0.00" class="form-control" />
+                        </div>
+
+                        <div class="form-group col-md-3">
+                            <label>Balance Amount :</label>
+                            <input type="number" style="text-align: right" id="txtBalanceAmount" readonly="readonly" value="0.00" class="form-control" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-success" disabled="disabled" id="btnPayment" value="Payment">Payment</button>
+                <button class="btn btn-danger" id="btnClose" value="Close" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>

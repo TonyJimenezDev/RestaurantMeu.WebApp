@@ -15,12 +15,26 @@ namespace RestaurantMeu.WebApp.Models
 using System;
     using System.Collections.Generic;
     
-public partial class PaymentType
+public partial class OrderDetail
 {
 
-    public int PaymentTypeId { get; set; }
+    public int OrderDetailId { get; set; }
 
-    public string PaymentTypeName { get; set; }
+    public int OrderId { get; set; }
+
+    public int ItemId { get; set; }
+
+    public decimal UnitPrice { get; set; }
+
+    public decimal Discount { get; set; }
+
+    public decimal Tax { get; set; }
+
+    public decimal Total { get; set; }
+
+
+
+    public virtual Order Order { get; set; }
 
 }
 
