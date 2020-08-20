@@ -32,6 +32,10 @@ public partial class OrderDetail
 
     public decimal Total { get; set; }
 
+    public decimal Quantity { get; set; }
+
+    public string ItemName { get; set; }
+
 
 
     public virtual Order Order { get; set; }

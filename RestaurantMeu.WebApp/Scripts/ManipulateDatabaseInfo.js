@@ -9,18 +9,59 @@ $(document).ready(function () {
         $("#txtQuantity").val(0); 
         GetItemPrice(itemId);
     });
-    $("input[type=number]").change(function () { 
+    $("input[type=number]").change(function () {
         CalculateSubTotal();
-    })
-    $("#txtPaymentAmount, #txtReturnTotal").change(function () { 
+    });
+    $("#txtPaymentAmount, #txtReturnTotal").change(function () {
         CalculateBalance();
         NotificationAlerts();
-    })
-    $("#btnAddToList").click(function () { 
+    });
+    $("#btnAddToList").click(function () {
         AddToTheItemList();
-    })
+    });
+    $("#btnPayment").click(function () {
+        FinalPayment()
+    });
 });
 
+function FinalPayment() {
+    var orderViewModel = {};
+    var btnPayment = $("#btnPayment");
+    var listOfOrderDetailViewModel = new Array();
+    orderViewModel.PaymentTypeId = $("#PaymentType").val();
+    orderViewModel.CustomerId = $("#Customer").val();
+    orderViewModel.FinalTotal = $("#txtFinalTotal").val();
+
+    $("#tblRestaurantItemList").find("tr:gt(0)").each(function () {
+        var orderDetailViewModel = {};
+
+        orderDetailViewModel.OrderId = parseFloat($(this).find("td:eq(0)").text()); /* equal to index td in tr = item name in list */
+        orderDetailViewModel.itemName = $(this).find("td:eq(1)").text(); /* equal to index td in tr = item name in list */
+        orderDetailViewModel.UnitPrice = parseFloat($(this).find("td:eq(2)").text()); /* equal to index td in tr = price in list */
+        orderDetailViewModel.Quantity = parseFloat($(this).find("td:eq(3)").text()); /* equal to index td in tr = quantity in list */
+        orderDetailViewModel.Discount = parseFloat($(this).find("td:eq(4)").text()); /* equal to index td in tr = discount in list*/
+        orderDetailViewModel.Tax = parseFloat($(this).find("td:eq(5)").text()); /* equal to index td in tr = tax in list*/
+        orderDetailViewModel.Total = parseFloat($(this).find("td:eq(6)").text()); /* equal to index td in tr = total in list*/
+
+        listOfOrderDetailViewModel.push(orderDetailViewModel);
+    });
+    orderViewModel.ListOfOrderDetailViewModels = listOfOrderDetailViewModel;
+
+    $.ajax({
+        async: true,
+        type: 'Post',
+        dataType: 'Json',
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(orderViewModel),
+        url: '/Home/Index',
+        sucess: function (data) {
+
+        },
+        error: function () {
+            alert("There is some problem adding the data");
+        }
+    })
+}
 
 function AddToTheItemList() {
     var tblItemList = $("#tblRestaurantItemList");
