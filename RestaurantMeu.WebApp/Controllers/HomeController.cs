@@ -1,9 +1,11 @@
-﻿using RestaurantMeu.WebApp.Models;
+﻿using Microsoft.Ajax.Utilities;
+using RestaurantMeu.WebApp.Models;
 using RestaurantMeu.WebApp.Repositories;
 using RestaurantMeu.WebApp.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 using System.Web;
 using System.Web.Mvc;
 
@@ -39,7 +41,9 @@ namespace RestaurantMeu.WebApp.Controllers
         [HttpPost]
         public JsonResult Index(OrderViewModel orderViewModel)
         {
-            return Json("", JsonRequestBehavior.AllowGet);
+            OrderRepo orderRepo = new OrderRepo();
+            orderRepo.AddOrder(orderViewModel);
+            return Json("Needs to be fixed", JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult About()

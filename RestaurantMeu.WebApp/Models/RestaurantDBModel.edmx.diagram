@@ -7,11 +7,11 @@
       <Diagram DiagramId="04e3c6ebe8dd44dc88d00acf5a8df4ea" Name="Diagram1">
         <EntityTypeShape EntityType="RestaurantDBModel.Customer" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="RestaurantDBModel.Item" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RestaurantDBModel.PaymentType" Width="1.5" PointX="0.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="RestaurantDBModel.OrderDetail" Width="1.5" PointX="5.625" PointY="4" />
+        <EntityTypeShape EntityType="RestaurantDBModel.PaymentType" Width="1.5" PointX="0.75" PointY="4.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="RestaurantDBModel.OrderDetail" Width="1.5" PointX="5.625" PointY="4" IsExpanded="true" />
         <EntityTypeShape EntityType="RestaurantDBModel.Order" Width="1.5" PointX="3.375" PointY="4" />
         <EntityTypeShape EntityType="RestaurantDBModel.Transaction" Width="1.5" PointX="5.375" PointY="0.75" />
-        <AssociationConnector Association="RestaurantDBModel.FK_OrderDetails_Orders" />
+        <AssociationConnector Association="RestaurantDBModel.FK_OrderDetails_Orders1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

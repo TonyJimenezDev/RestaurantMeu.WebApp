@@ -20,8 +20,6 @@ public partial class OrderDetail
 
     public int OrderDetailId { get; set; }
 
-    public int OrderId { get; set; }
-
     public int ItemId { get; set; }
 
     public decimal UnitPrice { get; set; }
@@ -35,6 +33,8 @@ public partial class OrderDetail
     public decimal Quantity { get; set; }
 
     public string ItemName { get; set; }
+
+    public int OrderId { get; set; }
 
 
 

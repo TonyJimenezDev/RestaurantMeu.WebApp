@@ -119,7 +119,7 @@
           <EntitySet Name="OrderDetails" EntityType="RestaurantDBModel.OrderDetail" />
           <EntitySet Name="Orders" EntityType="RestaurantDBModel.Order" />
           <EntitySet Name="Transactions" EntityType="RestaurantDBModel.Transaction" />
-          <AssociationSet Name="FK_OrderDetails_Orders" Association="RestaurantDBModel.FK_OrderDetails_Orders">
+          <AssociationSet Name="FK_OrderDetails_Orders1" Association="RestaurantDBModel.FK_OrderDetails_Orders1">
             <End Role="Order" EntitySet="Orders" />
             <End Role="OrderDetail" EntitySet="OrderDetails" />
           </AssociationSet>
@@ -129,15 +129,15 @@
             <PropertyRef Name="OrderDetailId" />
           </Key>
           <Property Name="OrderDetailId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="OrderId" Type="Int32" Nullable="false" />
           <Property Name="ItemId" Type="Int32" Nullable="false" />
           <Property Name="UnitPrice" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
           <Property Name="Discount" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
           <Property Name="Tax" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
           <Property Name="Total" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <NavigationProperty Name="Order" Relationship="RestaurantDBModel.FK_OrderDetails_Orders" FromRole="OrderDetail" ToRole="Order" />
           <Property Name="Quantity" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
           <Property Name="ItemName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Order" Relationship="RestaurantDBModel.FK_OrderDetails_Orders1" FromRole="OrderDetail" ToRole="Order" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -149,7 +149,7 @@
           <Property Name="OrderNumber" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="OrderDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="FinalTotal" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
-          <NavigationProperty Name="OrderDetails" Relationship="RestaurantDBModel.FK_OrderDetails_Orders" FromRole="Order" ToRole="OrderDetail" />
+          <NavigationProperty Name="OrderDetails" Relationship="RestaurantDBModel.FK_OrderDetails_Orders1" FromRole="Order" ToRole="OrderDetail" />
         </EntityType>
         <EntityType Name="Transaction">
           <Key>
@@ -161,7 +161,7 @@
           <Property Name="TransactionDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="TypeId" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
-        <Association Name="FK_OrderDetails_Orders">
+        <Association Name="FK_OrderDetails_Orders1">
           <End Type="RestaurantDBModel.Order" Role="Order" Multiplicity="1" />
           <End Type="RestaurantDBModel.OrderDetail" Role="OrderDetail" Multiplicity="*" />
           <ReferentialConstraint>
@@ -207,6 +207,7 @@
           <EntitySetMapping Name="OrderDetails">
             <EntityTypeMapping TypeName="RestaurantDBModel.OrderDetail">
               <MappingFragment StoreEntitySet="OrderDetails">
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
                 <ScalarProperty Name="ItemName" ColumnName="ItemName" />
                 <ScalarProperty Name="Quantity" ColumnName="Quantity" />
                 <ScalarProperty Name="Total" ColumnName="Total" />
@@ -214,7 +215,6 @@
                 <ScalarProperty Name="Discount" ColumnName="Discount" />
                 <ScalarProperty Name="UnitPrice" ColumnName="UnitPrice" />
                 <ScalarProperty Name="ItemId" ColumnName="ItemId" />
-                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
                 <ScalarProperty Name="OrderDetailId" ColumnName="OrderDetailId" />
               </MappingFragment>
             </EntityTypeMapping>
