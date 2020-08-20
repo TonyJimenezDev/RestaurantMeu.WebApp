@@ -53,7 +53,7 @@ function FinalPayment() {
         contentType: 'application/json; charset=utf-8',
         data: JSON.stringify(orderViewModel),
         url: '/Home/Index',
-        sucess: function (data) {
+        success: function (data) {
             alert(data);
         },
         error: function () {

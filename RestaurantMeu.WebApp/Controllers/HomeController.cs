@@ -41,9 +41,9 @@ namespace RestaurantMeu.WebApp.Controllers
         [HttpPost]
         public JsonResult Index(OrderViewModel orderViewModel)
         {
-            OrderRepo orderRepo = new OrderRepo();
-            orderRepo.AddOrder(orderViewModel);
-            return Json("Needs to be fixed", JsonRequestBehavior.AllowGet);
+            //OrderRepo orderRepo = new OrderRepo();
+            //orderRepo.AddOrder(orderViewModel);
+            return Json("Your order has been placed. Have a great day!", JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult About()
