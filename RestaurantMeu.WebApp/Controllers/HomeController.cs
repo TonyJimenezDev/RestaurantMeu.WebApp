@@ -19,6 +19,7 @@ namespace RestaurantMeu.WebApp.Controllers
         {
             _restaurantDBEntities = new RestaurantDBEntities();
         }
+
         public ActionResult Index()
         {
             CustomerRepo customerRepo = new CustomerRepo();
@@ -41,9 +42,9 @@ namespace RestaurantMeu.WebApp.Controllers
         [HttpPost]
         public JsonResult Index(OrderViewModel orderViewModel)
         {
-            //OrderRepo orderRepo = new OrderRepo();
-            //orderRepo.AddOrder(orderViewModel);
-            return Json("Your order has been placed. Have a great day!", JsonRequestBehavior.AllowGet);
+            OrderRepo orderRepo = new OrderRepo();
+            orderRepo.AddOrder(orderViewModel);
+            return Json("Order placed! Total: " + orderViewModel.FinalTotal.ToString() , JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult About()

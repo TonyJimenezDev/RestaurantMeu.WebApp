@@ -24,42 +24,38 @@ $(document).ready(function () {
     });
 });
 
-function FinalPayment() {
-    var orderViewModel = {};
-    var listOfOrderDetailViewModel = new Array();
-    orderViewModel.PaymentTypeId = $("#PaymentType").val();
-    orderViewModel.CustomerId = $("#Customer").val();
-    orderViewModel.FinalTotal = $("#txtFinalTotal").val();
-
-    $("#tblRestaurantItemList").find("tr:gt(0)").each(function () {
-        var orderDetailViewModel = {};
-
-        orderDetailViewModel.ItemId = parseFloat($(this).find("td:eq(0)").text()); /* equal to index td in tr = item name in list */
-        orderDetailViewModel.ItemName = $(this).find("td:eq(1)").text(); /* equal to index td in tr = item name in list */
-        orderDetailViewModel.UnitPrice = parseFloat($(this).find("td:eq(2)").text()); /* equal to index td in tr = price in list */
-        orderDetailViewModel.Quantity = parseFloat($(this).find("td:eq(3)").text()); /* equal to index td in tr = quantity in list */
-        orderDetailViewModel.Discount = parseFloat($(this).find("td:eq(4)").text()); /* equal to index td in tr = discount in list*/
-        orderDetailViewModel.Tax = parseFloat($(this).find("td:eq(5)").text()); /* equal to index td in tr = tax in list*/
-        orderDetailViewModel.Total = parseFloat($(this).find("td:eq(6)").text()); /* equal to index td in tr = total in list*/
-
-        listOfOrderDetailViewModel.push(orderDetailViewModel);
-    });
-    orderViewModel.ListOfOrderDetailViewModels = listOfOrderDetailViewModel;
-
+/* Ajax  */
+function GetItemPrice(itemId) {
     $.ajax({
         async: true,
-        type: 'POST',
-        dataType: 'JSON',
+        type: 'GET',
+        dataType: 'Json',
         contentType: 'application/json; charset=utf-8',
-        data: JSON.stringify(orderViewModel),
-        url: '/Home/Index',
+        data: { itemId: itemId },
+        url: "/home/GetItemPrice",
         success: function (data) {
-            alert(data);
+            $("#txtPrice").val(parseFloat(data).toFixed(2)) /* Adds value to price Text box */
         },
         error: function () {
-            alert("There is some problem adding the data");
+            $.notify("There was an issue getting item price");
         }
-    })
+    });
+}
+
+function CalculateSubTotal() { /* Tax included */
+    var unitPrice = $("#txtPrice").val();
+    var quantity = $("#txtQuantity").val();
+    var discount = $("#txtDiscount").val();
+    var tax = $("#txtTax").val();
+    if (quantity > 0) {
+        tax = ((unitPrice * quantity) - discount) * .0825;
+        if (parseFloat(tax) <= 0.00) $("#txtTax").val("0.00");
+        else $("#txtTax").val(tax.toFixed(2));
+    }
+
+    var Total = (unitPrice * quantity) - discount + tax;
+    if (Total <= 0) $("#txtTotal").val("0.00")
+    else $("#txtTotal").val(Total.toFixed(2))
 }
 
 function AddToTheItemList() {
@@ -90,7 +86,7 @@ function AddToTheItemList() {
     $("#tblRestaurantItemList").find("tr:gt(0)").each(function () {
         if ($(this).find("td:eq(1)").text() == itemName && count < 2) {
             count++;
-        } 
+        }
     });
 
     if (quantity > 0 && itemName != "") {
@@ -127,17 +123,6 @@ function UpdateItemList(quantity, discount, tax, total) {
     });
 }
 
-function CalculateBalance() {
-    var finalAmount = $("#txtPaymentTotal").val();
-    var paymentAmount = $("#txtPaymentAmount").val();
-    var returnAmount = $("#txtReturnTotal").val();
-    var balanceAmount = parseFloat(finalAmount) - parseFloat(paymentAmount) + parseFloat(returnAmount);
-    $("#txtBalanceAmount").val(parseFloat(balanceAmount).toFixed(2)); /* needs to be a number */
-
-    if (parseFloat(balanceAmount) == 0) $("#btnPayment").removeAttr("disabled");
-    else $("#btnPayment").attr("disabled", "disabled");
-}
-
 function FinalItemTotal() {
     var finalTotal = 0.00;
     var finalTax = 0.00;
@@ -155,10 +140,10 @@ function FinalItemTotal() {
 
 function RemoveItemOnClick(itemId) {
     var finalTax = parseFloat($("#txtFinalTax").val());
-    var finalTotal = parseFloat($("#txtFinalTotal").val()); 
+    var finalTotal = parseFloat($("#txtFinalTotal").val());
     var tax = parseFloat($(itemId).closest("tr").find("td:eq(5)").text()); /* equal to index td in tr = tax */
     var total = parseFloat($(itemId).closest("tr").find("td:eq(6)").text()); /* equal to index td in tr = total */
-    
+
     finalTax = finalTax - tax;
     finalTotal = finalTotal - total;
 
@@ -166,7 +151,7 @@ function RemoveItemOnClick(itemId) {
     $("#txtFinalTotal").val(finalTotal.toFixed(2));
     $("#txtPaymentTotal").val(parseFloat(finalTotal).toFixed(2));
     $("#txtBalanceAmount").val(parseFloat(finalTotal).toFixed(2));
-    $(itemId).closest('tr').remove(); 
+    $(itemId).closest('tr').remove();
     var rowCount = $('#tblRestaurantItemList').find('tr').length;
     if (rowCount == 1) $("#btnCheckOut").attr("disabled", "disabled");
 }
@@ -179,41 +164,70 @@ function ResetItems() {
         $("#txtDiscount").val('0.00');
         $("#txtTotal").val("0.00");
         $("#txtTax").val("0.00");
+        $("#txtReturnTotal").val("0.00");
+        $("#txtPaymentAmount").val("0.00");
     }
+    if ($("#divPayment").is(":visible")) {
+        $("#Customer").val(0);
+        $("#PaymentType").val(0);
+        $("#txtFinalPayment").val("0.00");
+        $("#txtPaymentAmount").val("0.00");
+        $("#txtFinalTotal").val("0.00");
+        $("#txtBalanceAmount").val("0.00");
+        $("#txtReturnTotal").val("0.00");
+    }
+
 }
 
-function CalculateSubTotal() { /* Tax included */
-    var unitPrice = $("#txtPrice").val();
-    var quantity = $("#txtQuantity").val();
-    var discount = $("#txtDiscount").val();
-    var tax = $("#txtTax").val();
-    if (quantity > 0) {
-        tax = ((unitPrice * quantity) - discount) * .0825;
-        if (parseFloat(tax) <= 0.00) $("#txtTax").val("0.00");
-        else $("#txtTax").val(tax.toFixed(2));
-    }
+function CalculateBalance() {
+    var finalAmount = $("#txtPaymentTotal").val();
+    var paymentAmount = $("#txtPaymentAmount").val();
+    var returnAmount = $("#txtReturnTotal").val();
+    var balanceAmount = parseFloat(finalAmount) - parseFloat(paymentAmount) + parseFloat(returnAmount);
+    $("#txtBalanceAmount").val(parseFloat(balanceAmount).toFixed(2)); /* needs to be a number */
 
-    var Total = (unitPrice * quantity) - discount + tax;
-    if (Total <= 0) $("#txtTotal").val("0.00")
-    else $("#txtTotal").val(Total.toFixed(2))
+    if (parseFloat(balanceAmount) == 0) $("#btnPayment").removeAttr("disabled");
+    else $("#btnPayment").attr("disabled", "disabled");
 }
 
-function GetItemPrice(itemId) {
+/* Ajax - Add data to database */
+function FinalPayment() {
+    var orderViewModel = {};
+    var listOfOrderDetailViewModel = new Array();
+    orderViewModel.PaymentTypeId = $("#PaymentType").val();
+    orderViewModel.CustomerId = $("#Customer").val();
+    orderViewModel.FinalTotal = $("#txtFinalTotal").val();
+
+    $("#tblRestaurantItemList").find("tr:gt(0)").each(function () {
+        var orderDetailViewModel = {};
+        orderDetailViewModel.ItemId = parseFloat($(this).find("td:eq(0)").text()); /* equal to index td in tr = item name in list */
+        orderDetailViewModel.ItemName = $(this).find("td:eq(1)").text(); /* equal to index td in tr = item name in list */
+        orderDetailViewModel.UnitPrice = parseFloat($(this).find("td:eq(2)").text()); /* equal to index td in tr = price in list */
+        orderDetailViewModel.Quantity = parseFloat($(this).find("td:eq(3)").text()); /* equal to index td in tr = quantity in list */
+        orderDetailViewModel.Discount = parseFloat($(this).find("td:eq(4)").text()); /* equal to index td in tr = discount in list*/
+        orderDetailViewModel.Tax = parseFloat($(this).find("td:eq(5)").text()); /* equal to index td in tr = tax in list*/
+        orderDetailViewModel.Total = parseFloat($(this).find("td:eq(6)").text()); /* equal to index td in tr = total in list*/
+
+        listOfOrderDetailViewModel.push(orderDetailViewModel);
+    });
+    orderViewModel.ListOfOrderDetailViewModels = listOfOrderDetailViewModel;
+
     $.ajax({
         async: true,
-        type: 'GET',
-        dataType: 'Json',
+        type: 'POST',
+        dataType: 'JSON',
         contentType: 'application/json; charset=utf-8',
-        data: { itemId: itemId },
-        url: "/home/getItemPrice",
+        data: JSON.stringify(orderViewModel),
+        url: '/Home/Index',
         success: function (data) {
-            $("#txtPrice").val(parseFloat(data).toFixed(2)) /* Adds value to price Text box */
+            $.notify(data, { className: 'Success', position: 'top center' });
+            ResetItems();
         },
         error: function () {
-            alert("Issue getting price");
+            $.notify("There is some problem adding the data", { className: 'error', position: 'top center' })
         }
-    });
-}
+    })
+} 
 
 function NotificationAlerts() {
     var itemName = $("#item option:selected").text();
@@ -224,7 +238,6 @@ function NotificationAlerts() {
         if (itemName == "") $("#item").notify("Item cannot be empty");
         if (quantity < 1 || isNaN(quantity)) $("#txtQuantity").notify("Quantity cannot be 0")
     } else {
-        if (balanceAmount == "") $("#txtBalanceAmount").val(finalTotal); 
+        if (balanceAmount == "") $("#txtBalanceAmount").val(finalTotal);
     }
-
 }
